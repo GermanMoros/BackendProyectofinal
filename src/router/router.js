@@ -14,561 +14,665 @@ router.get('/', (req, res)=>{
 });
 
 //.Devuelve  todos los datos buzosycamperas
-router.get('/buzosycamperas',  (req, res)=>{
-    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
-    //     if(error){
-    //         res.sendStatus(403);
-        // }else{
-        mysqlConeccion.query('select * from buzosycamperas order by estado, idBuzosyCamperas', (err, registro)=>{
+router.get('/buzosycamperas',verificarToken,  (req, res)=>{
+    jwt.verify(req.token, 'empresaropa', (error, valido)=>{
+        if(error){
+            res.sendStatus(403);
+        }else{
+        mysqlConeccion.query('select * from buzosycamperas', (err, registro)=>{
             if(!err){
                 res.json(registro);
             }else{
                 console.log(err)
             }
         })
-        // }
-    // })
-});
-
-
-router.put('/cambiobuzosycamperas/:id', (req, res)=>{
-     let idbuzosycamperas  = req.params.idbuzosycamperas;
-     let estado=req.body.estado  
-     
-     let query=`UPDATE buzosycamperas SET estado='${estado}' WHERE idbuzosycamperas='${idbuzosycamperas}'`;
-     mysqlConeccion.query(query, (err, registros)=>{
-        if(!err){
-            res.json({
-                status: true,
-                mensaje:"El estado del buzosycamperas se cambio correctamente"
-            });
-        }else{
-            res.json({
-                status: false,
-                mensaje:"Hubo un error"
-            });
         }
     })
-    
-});
-// alta
-router.put('/altabuzosycamperas/:id', (req, res)=>{
-    let idbuzosycamperas  = req.params.idbuzosycamperas;
-    let query=`UPDATE buzosycamperas SET estado='A' WHERE idbuzosycamperas='${idbuzosycamperas}'`;
-
-     mysqlConeccion.query(query, (err, registros)=>{
-        if(!err){
-            res.json({
-                status: true,
-                mensaje:"buzosycamperas se dio de Alta correctamente"
-            });
-        }else{
-           res.json({
-                status: false,
-                mensaje:"Hubo un error"
-            });
-        }
-    })
-    
 });
 
-router.get('/buzosycamperas/:idbuzosycamperas',(req, res)=>{
 
-        const  { idbuzosycamperas } = req.params;
-                mysqlConeccion.query('select * from buzosycamperas where idbuzosycamperas=?',[idbuzosycamperas], (err, registros)=>{
-                    if(!err){
-                        res.json(registros);
-                    }else{
-                        console.log(err)
-                    }
-                })
-       
-    });
 
-router.post('/buzosycamperas', (req, res)=>{
-    const { idbuzosycamperas } =req.body
-     console.log(req.body);
-            let query=`INSERT INTO buzosycamperas (idbuzosycamperas, estado) VALUES ('${idbuzosycamperas}', 'A')`;
+// alta y baja
+router.put('/altabuzosycamperas/:id',(req, res)=>{
+
+    let id = req.params.id; 
+    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
+    //     if(error){
+    //         res.sendStatus(403);
+        // }else{
+            let query=`UPDATE buzosycamperas set Estado = 'A' WHERE idBuzosyCamperas='${id}'`;
             mysqlConeccion.query(query, (err, registros)=>{
                 if(!err){
                     res.json({
                         status: true,
-                        mensaje:"buzosycamperas se dio de Alta correctamente"
+                        mensaje:"El producto se dio de ALTA correctamente"
                     });
                 }else{
-                    console.log(err)
+                    console.log('El error  es : '+ err); 
                 }
             })
-      
-    
-});
-
-//metodo para eliminar los datos en particular
-router.delete('/buzosycamperas/:idbuzosycamperas', (req, res)=>{
-   let idbuzosycamperas  = req.params.idbuzosycamperas; 
-   jwt.verify(req.token, 'siliconKey', (error, valido)=>{
-    if(error){
-        res.sendStatus(403);
-    }else{
-        let query=`DELETE FROM buzosycamperas WHERE idbuzosycamperas='${idbuzosycamperas}'`;
-        mysqlConeccion.query(query, (err, registros)=>{
-                if(!err){
-                    res.send('El Id que ELIMINAMOS es : '+registros);
-                }else{
-                    res.send('El error  es : '+ err); 
-                }
-            })
-        }
-    })
-});
-
-//.Devuelve  todos los datos chanclas
-router.get('/chanclas', (req, res)=>{
-    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
-    //     if(error){
-    //         res.sendStatus(403);
-        // }else{
-        mysqlConeccion.query('select * from chanclas order by estado, idchanclas', (err, registro)=>{
-            if(!err){
-                res.json(registro);
-            }else{
-                console.log(err)
-            }
-        })
     //     }
     // })
-});
+ });
 
 
-router.put('/chanclas/:id', (req, res)=>{
-     let idchanclas  = req.params.idchanclas;
-     let estado=req.body.estado  
-     
-     let query=`UPDATE chanclas SET estado='${estado}' WHERE idchanclas='${idchanclas}'`;
-     mysqlConeccion.query(query, (err, registros)=>{
-        if(!err){
-            res.json({
-                status: true,
-                mensaje:"El estado de chanclas se cambio correctamente"
-            });
-        }else{
-            res.json({
-                status: false,
-                mensaje:"Hubo un error"
-            });
-        }
-    })
-    
-});
-// alta
-router.put('/altachanclas/:id', (req, res)=>{
-    let id  = req.params.id;
-    let query=`UPDATE chanclas SET estado='A' WHERE idchanclas='${idchanclas}'`;
-
-     mysqlConeccion.query(query, (err, registros)=>{
-        if(!err){
-            res.json({
-                status: true,
-                mensaje:"chanclas se dio de Alta correctamente"
-            });
-        }else{
-           res.json({
-                status: false,
-                mensaje:"Hubo un error"
-            });
-        }
-    })
-    
-});
-
-router.get('/chanclas/:idchanclas',(req, res)=>{
-
-        const  { idchanclas } = req.params;
-                mysqlConeccion.query('select * from chanclas where idchanclas=?',[idchanclas], (err, registros)=>{
-                    if(!err){
-                        res.json(registros);
-                    }else{
-                        console.log(err)
-                    }
-                })
-       
-    });
-
-router.post('/chanclas', (req, res)=>{
-    const { idchanclas } =req.body
-     console.log(req.body);
-            let query=`INSERT INTO chanclas (idchanclas, estado) VALUES ('${idchanclas}', 'A')`;
+router.put('/bajabuzosycamperas/:id',(req, res)=>{
+    //asigna a id_alumno el valor que recibe por el parametro 
+    let id = req.params.id; 
+    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
+    //     if(error){
+    //         res.sendStatus(403);
+        // }else{
+            let query=`UPDATE buzosycamperas set Estado = 'B' WHERE idBuzosyCamperas='${id}'`;
             mysqlConeccion.query(query, (err, registros)=>{
                 if(!err){
                     res.json({
                         status: true,
-                        mensaje:"chanclas se dio de Alta correctamente"
+                        mensaje:"El producto se dio de BAJA correctamente"
                     });
+                }else{
+                    console.log('El error  es : '+ err); 
+                }
+            })
+    //     }
+    // })
+ });
+
+
+ router.get('/buzosycamperas/:idBuzosyCamperas', (req, res)=>{
+
+    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
+    //     if(error){
+    //         res.sendStatus(403);
+        // }else{
+            const {idBuzosyCamperas} = req.params
+            mysqlConeccion.query('select * from buzosycamperas where idBuzosyCamperas=?',[idBuzosyCamperas], (err, registro)=>{
+                if(!err){
+                    res.json(registro);
                 }else{
                     console.log(err)
                 }
             })
-      
+        // }
+    // })   
     
 });
 
-//metodo para eliminar los datos en particular
-router.delete('/chanclas/:idchanclas', (req, res)=>{
-   let idchanclas  = req.params.idchanclas; 
-   jwt.verify(req.token, 'siliconKey', (error, valido)=>{
-    if(error){
-        res.sendStatus(403);
-    }else{
-        let query=`DELETE FROM chanclas WHERE idchanclas='${idchanclas}'`;
-        mysqlConeccion.query(query, (err, registros)=>{
-                if(!err){
-                    res.send('El Id que ELIMINAMOS es : '+registros);
-                }else{
-                    res.send('El error  es : '+ err); 
-                }
+
+/// EDIT
+router.put('/edit_buzosycamperas/:id' , (req, res)=>{
+    let idBuzosyCamperas = req.params.id;
+    const {  Talle, Color, Cantidad} =req.body  
+    console.log(req.body)
+    let query=`UPDATE buzosycamperas SET Talle='${Talle}', Color='${Color}', Cantidad='${Cantidad}' WHERE idBuzosyCamperas='${idBuzosyCamperas}'`;
+    mysqlConeccion.query(query, [Talle, Color, Cantidad, idBuzosyCamperas], (err, registros)=>{
+        if(!err){
+            res.json({
+                    status: true,
+                    datos: rows,
+                    mensaje: 'El producto se edito correctamente'
+            }) 
+        }else{
+            res.json({
+                status: false,
+                mensaje: 'Completar los campos correctamente'
             })
+            console.log(err)
+        }
+    })
+       
+});
+
+
+
+router.post('/listarbuzosycamperas', (req, res)=>{
+    const { Talle, Cantidad, Color} = req.body
+  
+    let query=`SELECT * FROM buzosycamperas WHERE Talle='${Talle}' AND Cantidad='${Cantidad}' AND Color='${Color}'`;
+    mysqlConeccion.query(query, (err, registros)=>{
+      if(!err){
+        if(registros.length > 0){
+          res.send('El producto ya existe en la base de datos');
+        } else {
+          query=`INSERT INTO buzosycamperas (Talle, Cantidad, Color) VALUES ('${Talle}','${Cantidad}','${Color}') `;
+          mysqlConeccion.query(query, (err, registros)=>{
+            if(!err){
+              res.send('Se inserto correctamente nuestro producto: '+Talle+Cantidad+Color);
+            }else{
+              console.log(err)
+              res.send('El error es: '+err);
+            }
+          });
+        }
+      }else{
+        console.log(err)
+        res.send('El error es: '+err);
+      }
+    });
+  });
+
+
+
+
+
+////////////////////// CHANCLAS /////////////////////////
+
+
+//.Devuelve  todos los datos 
+router.get('/chanclas', verificarToken,  (req, res)=>{
+    jwt.verify(req.token, 'empresaropa', (error, valido)=>{
+        if(error){
+            res.sendStatus(403);
+        }else{
+        mysqlConeccion.query('select * from chanclas', (err, registro)=>{
+            if(!err){
+                res.json(registro);
+            }else{
+                console.log(err)
+            }
+        })
         }
     })
 });
+
+
+
+// alta y baja
+router.put('/altachanclas/:id',(req, res)=>{
+    //asigna a id_alumno el valor que recibe por el parametro 
+    let id = req.params.id; 
+    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
+    //     if(error){
+    //         res.sendStatus(403);
+        // }else{
+            let query=`UPDATE chanclas set Estado = 'A' WHERE idChanclas='${id}'`;
+            mysqlConeccion.query(query, (err, registros)=>{
+                if(!err){
+                    res.json({
+                        status: true,
+                        mensaje:"El producto se dio de ALTA correctamente"
+                    });
+                }else{
+                    console.log('El error  es : '+ err); 
+                }
+            })
+    //     }
+    // })
+ });
+
+
+router.put('/bajachanclas/:id',(req, res)=>{
+    //asigna a id_alumno el valor que recibe por el parametro 
+    let id = req.params.id; 
+    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
+    //     if(error){
+    //         res.sendStatus(403);
+        // }else{
+            let query=`UPDATE chanclas set Estado = 'B' WHERE idChanclas='${id}'`;
+            mysqlConeccion.query(query, (err, registros)=>{
+                if(!err){
+                    res.json({
+                        status: true,
+                        mensaje:"El producto se dio de BAJA correctamente"
+                    });
+                }else{
+                    console.log('El error  es : '+ err); 
+                }
+            })
+    //     }
+    // })
+ });
+
+
+ 
+ router.get('/chanclas/:idChanclas', (req, res)=>{
+
+    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
+    //     if(error){
+    //         res.sendStatus(403);
+        // }else{
+            const {idChanclas} = req.params
+            mysqlConeccion.query('select * from chanclas where idChanclas=?',[idChanclas], (err, registro)=>{
+                if(!err){
+                    res.json(registro);
+                }else{
+                    console.log(err)
+                }
+            })
+        // }
+    // })   
+    
+});
+
+
+/// EDIT
+router.put('/edit_chanclas/:id' , (req, res)=>{
+    //asigna a id_curso el valor que recibe por el parametro 
+    let idChanclas = req.params.id;
+    const {  Talle, Color, Cantidad} =req.body  
+    console.log(req.body)
+    let query=`UPDATE chanclas SET Talle='${Talle}', Color='${Color}', Cantidad='${Cantidad}' WHERE idChanclas='${idChanclas}'`;
+    mysqlConeccion.query(query, [Talle, Color, Cantidad, idChanclas], (err, registros)=>{
+        if(!err){
+            res.send('El Id que editamos es : '+idChanclas+' y cambiamos muchos campos!!');
+        }else{
+            console.log(err)
+        }
+    })
+       
+});
+
+
+router.post('/listarchanclas', (req, res)=>{
+    const { Talle, Cantidad, Color} = req.body
+    
+            let query=`INSERT INTO chanclas (Talle, Cantidad, Color) VALUES ('${Talle}','${Cantidad}','${Color}') `;
+            mysqlConeccion.query(query, (err, registros)=>{
+                if(!err){
+                    res.send('Se inserto correctamente nuestro producto: '+Talle+Cantidad+Color);
+                }else{
+                    console.log(err)
+                    res.send('El error es: '+err);
+                }
+            })
+       
+    
+});
+
+
 
 //.Devuelve  todos los datos pantalones
-router.get('/pantalones',  (req, res)=>{
-    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
-    //     if(error){
-    //         res.sendStatus(403);
-        // }else{
-        mysqlConeccion.query('select * from pantalones order by estado, idpantalones', (err, registro)=>{
+
+
+router.get('/pantalones', verificarToken, (req, res)=>{
+    jwt.verify(req.token, 'empresaropa', (error, valido)=>{
+        if(error){
+            res.sendStatus(403);
+        }else{
+        mysqlConeccion.query('select * from pantalones', (err, registro)=>{
             if(!err){
                 res.json(registro);
             }else{
                 console.log(err)
             }
         })
-    //     }
-    // })
-});
-
-
-router.put('/cambiopantalones/:id', (req, res)=>{
-     let idpantalones  = req.params.idpantalones;
-     let estado=req.body.estado  
-     
-     let query=`UPDATE pantalones SET estado='${estado}' WHERE idpantalones='${idpantalones}'`;
-     mysqlConeccion.query(query, (err, registros)=>{
-        if(!err){
-            res.json({
-                status: true,
-                mensaje:"El estado del pantalones se cambio correctamente"
-            });
-        }else{
-            res.json({
-                status: false,
-                mensaje:"Hubo un error"
-            });
         }
     })
-    
-});
-// alta
-router.put('/pantalones/:id', (req, res)=>{
-    let idpantalones  = req.params.idpantalones;
-    let query=`UPDATE pantalones SET estado='A' WHERE idpantalones='${idpantalones}'`;
-
-     mysqlConeccion.query(query, (err, registros)=>{
-        if(!err){
-            res.json({
-                status: true,
-                mensaje:"pantalones se dio de Alta correctamente"
-            });
-        }else{
-           res.json({
-                status: false,
-                mensaje:"Hubo un error"
-            });
-        }
-    })
-    
 });
 
-router.get('/pantalones/:idpantalones',(req, res)=>{
 
-        const  { idpantalones } = req.params;
-                mysqlConeccion.query('select * from pantalones where idpantalones=?',[idpantalones], (err, registros)=>{
-                    if(!err){
-                        res.json(registros);
-                    }else{
-                        console.log(err)
-                    }
-                })
-       
-    });
 
-router.post('/pantalones', (req, res)=>{
-    const { idpantalones } =req.body
-     console.log(req.body);
-            let query=`INSERT INTO pantalones (idpantalones, estado) VALUES ('${idpantalones}', 'A')`;
+
+// alta y baja
+router.put('/altapantalones/:id',(req, res)=>{
+    //asigna a id_alumno el valor que recibe por el parametro 
+    let id = req.params.id; 
+    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
+    //     if(error){
+    //         res.sendStatus(403);
+        // }else{
+            let query=`UPDATE pantalones set Estado = 'A' WHERE idPantalones='${id}'`;
             mysqlConeccion.query(query, (err, registros)=>{
                 if(!err){
                     res.json({
                         status: true,
-                        mensaje:"pantalones se dio de Alta correctamente"
+                        mensaje:"El producto se dio de ALTA correctamente"
                     });
+                }else{
+                    console.log('El error  es : '+ err); 
+                }
+            })
+    //     }
+    // })
+ });
+
+
+router.put('/bajapantalones/:id',(req, res)=>{
+    //asigna a id_alumno el valor que recibe por el parametro 
+    let id = req.params.id; 
+    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
+    //     if(error){
+    //         res.sendStatus(403);
+        // }else{
+            let query=`UPDATE pantalones set Estado = 'B' WHERE idPantalones='${id}'`;
+            mysqlConeccion.query(query, (err, registros)=>{
+                if(!err){
+                    res.json({
+                        status: true,
+                        mensaje:"El producto se dio de BAJA correctamente"
+                    });
+                }else{
+                    console.log('El error  es : '+ err); 
+                }
+            })
+    //     }
+    // })
+ });
+
+
+
+ router.get('/pantalones/:idPantalones', (req, res)=>{
+
+    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
+    //     if(error){
+    //         res.sendStatus(403);
+        // }else{
+            const {idPantalones} = req.params
+            mysqlConeccion.query('select * from pantalones where idPantalones=?',[idPantalones], (err, registro)=>{
+                if(!err){
+                    res.json(registro);
                 }else{
                     console.log(err)
                 }
             })
-      
+        // }
+    // })   
     
 });
 
-//metodo para eliminar los datos en particular
-router.delete('/pantalones/:idpantalones', (req, res)=>{
-   let idpantalones  = req.params.idpantalones; 
-   jwt.verify(req.token, 'siliconKey', (error, valido)=>{
-    if(error){
-        res.sendStatus(403);
-    }else{
-        let query=`DELETE FROM pantalones WHERE idpantalones='${idpantalones}'`;
-        mysqlConeccion.query(query, (err, registros)=>{
-                if(!err){
-                    res.send('El Id que ELIMINAMOS es : '+registros);
-                }else{
-                    res.send('El error  es : '+ err); 
-                }
-            })
+
+/// EDIT
+router.put('/edit_pantalones/:id' , (req, res)=>{
+    let idPantalones = req.params.id;
+    const {  Talle, Color, Cantidad} =req.body  
+    console.log(req.body)
+    let query=`UPDATE pantalones SET Talle='${Talle}', Color='${Color}', Cantidad='${Cantidad}' WHERE idPantalones='${idPantalones}'`;
+    mysqlConeccion.query(query, [Talle, Color, Cantidad, idPantalones], (err, registros)=>{
+        if(!err){
+            res.send('El Id que editamos es : '+idPantalones+' y cambiamos muchos campos!!');
+        }else{
+            console.log(err)
         }
     })
+       
 });
+
+
+router.post('/listarpantalones', (req, res)=>{
+    const { Talle, Cantidad, Color} = req.body
+    
+            let query=`INSERT INTO pantalones (Talle, Cantidad, Color) VALUES ('${Talle}','${Cantidad}','${Color}') `;
+            mysqlConeccion.query(query, (err, registros)=>{
+                if(!err){
+                    res.send('Se inserto correctamente nuestro producto: '+Talle+Cantidad+Color);
+                }else{
+                    console.log(err)
+                    res.send('El error es: '+err);
+                }
+            })
+       
+    
+});
+
 
 //.Devuelve  todos los datos mallas
-router.get('/mallas',  (req, res)=>{
-    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
-    //     if(error){
-    //         res.sendStatus(403);
-        // }else{
-        mysqlConeccion.query('select * from mallas order by estado, idMallas', (err, registro)=>{
+//.Devuelve  todos los datos buzosycamperas
+router.get('/mallas', verificarToken, (req, res)=>{
+    jwt.verify(req.token, 'empresaropa', (error, valido)=>{
+        if(error){
+            res.sendStatus(403);
+        }else{
+        mysqlConeccion.query('select * from mallas', (err, registro)=>{
             if(!err){
                 res.json(registro);
             }else{
                 console.log(err)
             }
         })
-    //     }
-    // })
-});
-
-
-router.put('/cambiomallas/:id', (req, res)=>{
-     let idmallas  = req.params.idmallas;
-     let estado=req.body.estado  
-     
-     let query=`UPDATE mallas SET estado='${estado}' WHERE idmallas='${idmallas}'`;
-     mysqlConeccion.query(query, (err, registros)=>{
-        if(!err){
-            res.json({
-                status: true,
-                mensaje:"El estado de mallas se cambio correctamente"
-            });
-        }else{
-            res.json({
-                status: false,
-                mensaje:"Hubo un error"
-            });
         }
     })
-    
-});
-// alta
-router.put('/mallas/:id', (req, res)=>{
-    let idmallas  = req.params.idmallas;
-    let query=`UPDATE mallas SET estado='A' WHERE idmallas='${idmallas}'`;
-
-     mysqlConeccion.query(query, (err, registros)=>{
-        if(!err){
-            res.json({
-                status: true,
-                mensaje:"mallas se dio de Alta correctamente"
-            });
-        }else{
-           res.json({
-                status: false,
-                mensaje:"Hubo un error"
-            });
-        }
-    })
-    
 });
 
-router.get('/mallas/:idmallas',(req, res)=>{
 
-        const  { idmallas } = req.params;
-                mysqlConeccion.query('select * from mallas where idmallas=?',[idmallas], (err, registros)=>{
-                    if(!err){
-                        res.json(registros);
-                    }else{
-                        console.log(err)
-                    }
-                })
-       
-    });
 
-router.post('/mallas', (req, res)=>{
-    const { idmallas } =req.body
-     console.log(req.body);
-            let query=`INSERT INTO mallas (idmallas, estado) VALUES ('${idmallas}', 'A')`;
+// alta y baja
+router.put('/altamallas/:id',(req, res)=>{
+    //asigna a id_alumno el valor que recibe por el parametro 
+    let id = req.params.id; 
+    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
+    //     if(error){
+    //         res.sendStatus(403);
+        // }else{
+            let query=`UPDATE mallas set Estado = 'A' WHERE idMallas='${id}'`;
             mysqlConeccion.query(query, (err, registros)=>{
                 if(!err){
                     res.json({
                         status: true,
-                        mensaje:"mallas se dio de Alta correctamente"
+                        mensaje:"El producto se dio de ALTA correctamente"
                     });
+                }else{
+                    console.log('El error  es : '+ err); 
+                }
+            })
+    //     }
+    // })
+ });
+
+
+router.put('/bajamallas/:id',(req, res)=>{
+    //asigna a id_alumno el valor que recibe por el parametro 
+    let id = req.params.id; 
+    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
+    //     if(error){
+    //         res.sendStatus(403);
+        // }else{
+            let query=`UPDATE mallas set Estado = 'B' WHERE idMallas='${id}'`;
+            mysqlConeccion.query(query, (err, registros)=>{
+                if(!err){
+                    res.json({
+                        status: true,
+                        mensaje:"El producto se dio de BAJA correctamente"
+                    });
+                }else{
+                    console.log('El error  es : '+ err); 
+                }
+            })
+    //     }
+    // })
+ });
+
+ router.get('/mallas/:idMallas', (req, res)=>{
+
+    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
+    //     if(error){
+    //         res.sendStatus(403);
+        // }else{
+            const {idMallas} = req.params
+            mysqlConeccion.query('select * from mallas where idMallas=?',[idMallas], (err, registro)=>{
+                if(!err){
+                    res.json(registro);
                 }else{
                     console.log(err)
                 }
             })
-      
+        // }
+    // })   
     
 });
 
-//metodo para eliminar los datos en particular
-router.delete('/mallas/:idmallas', (req, res)=>{
-   let idmallas  = req.params.idmallas; 
-   jwt.verify(req.token, 'siliconKey', (error, valido)=>{
-    if(error){
-        res.sendStatus(403);
-    }else{
-        let query=`DELETE FROM mallas WHERE idmallas='${idmallas}'`;
-        mysqlConeccion.query(query, (err, registros)=>{
-                if(!err){
-                    res.send('El Id que ELIMINAMOS es : '+registros);
-                }else{
-                    res.send('El error  es : '+ err); 
-                }
-            })
+
+/// EDIT
+router.put('/edit_mallas/:id' , (req, res)=>{
+    //asigna a id_curso el valor que recibe por el parametro 
+    let idMallas = req.params.id;
+    const {  Talle, Color, Cantidad} =req.body  
+    console.log(req.body)
+    let query=`UPDATE mallas SET Talle='${Talle}', Color='${Color}', Cantidad='${Cantidad}' WHERE idMallas='${idMallas}'`;
+    mysqlConeccion.query(query, [Talle, Color, Cantidad, idMallas], (err, registros)=>{
+        if(!err){
+            res.send('El Id que editamos es : '+idMallas+' y cambiamos muchos campos!!');
+        }else{
+            console.log(err)
         }
     })
+       
 });
+
+
+
+router.post('/listarmallas', (req, res)=>{
+    const { Talle, Cantidad, Color} = req.body
+    
+            let query=`INSERT INTO mallas (Talle, Cantidad, Color) VALUES ('${Talle}','${Cantidad}','${Color}') `;
+            mysqlConeccion.query(query, (err, registros)=>{
+                if(!err){
+                    res.send('Se inserto correctamente nuestro producto: '+Talle+Cantidad+Color);
+                }else{
+                    console.log(err)
+                    res.send('El error es: '+err);
+                }
+            })
+       
+    
+});
+
+
+
+
+
+
+
 
 //.Devuelve  todos los datos remeras
-router.get('/remeras', (req, res)=>{
-    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
-    //     if(error){
-    //         res.sendStatus(403);
-        // }else{
-        mysqlConeccion.query('select * from remeras order by estado, idremeras', (err, registro)=>{
+
+router.get('/remeras', verificarToken, (req, res)=>{
+    jwt.verify(req.token, 'empresaropa', (error, valido)=>{
+        if(error){
+            res.sendStatus(403);
+        }else{
+        mysqlConeccion.query('select * from remeras', (err, registro)=>{
             if(!err){
                 res.json(registro);
             }else{
                 console.log(err)
             }
         })
-    //     }
-    // })
-});
-
-
-router.put('/cambioremeras/:id', (req, res)=>{
-     let idremeras  = req.params.idremeras;
-     let estado=req.body.estado  
-     
-     let query=`UPDATE remeras SET estado='${estado}' WHERE idremeras='${idremeras}'`;
-     mysqlConeccion.query(query, (err, registros)=>{
-        if(!err){
-            res.json({
-                status: true,
-                mensaje:"El estado de remeras se cambio correctamente"
-            });
-        }else{
-            res.json({
-                status: false,
-                mensaje:"Hubo un error"
-            });
         }
     })
-    
-});
-// alta
-router.put('/remeras/:id', (req, res)=>{
-    let idremeras  = req.params.idremeras;
-    let query=`UPDATE remeras SET estado='A' WHERE idremeras='${idremeras}'`;
-
-     mysqlConeccion.query(query, (err, registros)=>{
-        if(!err){
-            res.json({
-                status: true,
-                mensaje:"remeras se dio de Alta correctamente"
-            });
-        }else{
-           res.json({
-                status: false,
-                mensaje:"Hubo un error"
-            });
-        }
-    })
-    
 });
 
-router.get('/remeras/:idremeras',(req, res)=>{
 
-        const  { idremeras } = req.params;
-                mysqlConeccion.query('select * from remeras where idremeras=?',[idremeras], (err, registros)=>{
-                    if(!err){
-                        res.json(registros);
-                    }else{
-                        console.log(err)
-                    }
-                })
-       
-    });
 
-router.post('/remeras', (req, res)=>{
-    const { idremeras } =req.body
-     console.log(req.body);
-            let query=`INSERT INTO remeras (idremeras, estado) VALUES ('${idremeras}', 'A')`;
+// alta y baja
+router.put('/altaremeras/:id',(req, res)=>{
+    //asigna a id_alumno el valor que recibe por el parametro 
+    let id = req.params.id; 
+    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
+    //     if(error){
+    //         res.sendStatus(403);
+        // }else{
+            let query=`UPDATE remeras set Estado = 'A' WHERE idRemeras='${id}'`;
             mysqlConeccion.query(query, (err, registros)=>{
                 if(!err){
                     res.json({
                         status: true,
-                        mensaje:"remeras se dio de Alta correctamente"
+                        mensaje:"El producto se dio de ALTA correctamente"
                     });
                 }else{
+                    console.log('El error  es : '+ err); 
+                }
+            })
+    //     }
+    // })
+ });
+
+
+router.put('/bajaremeras/:id',(req, res)=>{
+    //asigna a id_alumno el valor que recibe por el parametro 
+    let id = req.params.id; 
+    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
+    //     if(error){
+    //         res.sendStatus(403);
+        // }else{
+            let query=`UPDATE remeras set Estado = 'B' WHERE idRemeras='${id}'`;
+            mysqlConeccion.query(query, (err, registros)=>{
+                if(!err){
+                    res.json({
+                        status: true,
+                        mensaje:"El producto se dio de BAJA correctamente"
+                    });
+                }else{
+                    console.log('El error  es : '+ err); 
+                }
+            })
+    //     }
+    // })
+ });
+
+
+ router.get('/remeras/:idRemeras', (req, res)=>{
+
+    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
+    //     if(error){
+    //         res.sendStatus(403);
+        // }else{
+            const {idRemeras} = req.params
+            mysqlConeccion.query('select * from remeras where idRemeras=?',[idRemeras], (err, registro)=>{
+                if(!err){
+                    res.json(registro);
+                }else{
                     console.log(err)
                 }
             })
-      
+        // }
+    // })   
     
 });
 
-//metodo para eliminar los datos en particular
-router.delete('/remeras/:idremeras', (req, res)=>{
-   let idremeras  = req.params.idremeras; 
-   jwt.verify(req.token, 'siliconKey', (error, valido)=>{
-    if(error){
-        res.sendStatus(403);
-    }else{
-        let query=`DELETE FROM remeras WHERE idremeras='${idremeras}'`;
-        mysqlConeccion.query(query, (err, registros)=>{
-                if(!err){
-                    res.send('El Id que ELIMINAMOS es : '+registros);
-                }else{
-                    res.send('El error  es : '+ err); 
-                }
-            })
+
+/// EDIT
+router.put('/edit_remeras/:id' , (req, res)=>{
+    //asigna a id_curso el valor que recibe por el parametro 
+    let idRemeras = req.params.id;
+    const {  Talle, Color, Cantidad} =req.body  
+    console.log(req.body)
+    let query=`UPDATE remeras SET Talle='${Talle}', Color='${Color}', Cantidad='${Cantidad}' WHERE idRemeras='${idRemeras}'`;
+    mysqlConeccion.query(query, [Talle, Color, Cantidad, idRemeras], (err, registros)=>{
+        if(!err){
+            res.send('El Id que editamos es : '+idRemeras+' y cambiamos muchos campos!!');
+        }else{
+            console.log(err)
         }
     })
+       
 });
+
+
+router.post('/listarremeras', (req, res)=>{
+    const { Talle, Cantidad, Color} = req.body
+    
+            let query=`INSERT INTO remeras (Talle, Cantidad, Color) VALUES ('${Talle}','${Cantidad}','${Color}') `;
+            mysqlConeccion.query(query, (err, registros)=>{
+                if(!err){
+                    res.send('Se inserto correctamente nuestro producto: '+Talle+Cantidad+Color);
+                }else{
+                    console.log(err)
+                    res.send('El error es: '+err);
+                }
+            })
+       
+    
+});
+
+
+
+////////////////////////////////////////////////////////
+/////////////////////PROVEEDORES /////////////////////////
+//////////////////////////////////////////////////////
+
+
+
 
 //Devuelve a todos los Proveedores activos de nuestra base de datos 
-router.get('/Proveedores', verificarToken, (req, res)=>{
+router.get('/proveedores',verificarToken, (req, res)=>{
     
-    jwt.verify(req.token, 'siliconKey', (error)=>{
+    jwt.verify(req.token, 'empresaropa', (error)=>{
         if(error){
             res.sendStatus(403);
         }else{
-            const query='select * from Proveedores';
-            mysqlConeccion.query(query, (err, rows)=>{
+            mysqlConeccion.query('select * from proveedores', (err, registro)=>{
                 if(!err){
-                    res.json(rows);
+                    res.json(registro);
                 }else{
                     console.log(err)
                 }
@@ -577,14 +681,99 @@ router.get('/Proveedores', verificarToken, (req, res)=>{
     });    
 });
 
-//metodo para insertar proveedores a travez del metodo POST
-router.post('/Proveedores', (req, res)=>{
-    const { idproveedores, nombre, direccion, telefono} = req.body
-    
-            let query=`INSERT INTO proveedores (idproveedores, nombre, direccion) VALUES ('${idproveedores}','${nombre}','${direccion}','${telefono}','A')`;
+
+///// ALTA /////
+router.put('/altaproveedores/:id',(req, res)=>{
+    //asigna a id_alumno el valor que recibe por el parametro 
+    let id = req.params.id; 
+    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
+    //     if(error){
+    //         res.sendStatus(403);
+        // }else{
+            let query=`UPDATE proveedores set Estado = 'A' WHERE idProveedores='${id}'`;
             mysqlConeccion.query(query, (err, registros)=>{
                 if(!err){
-                    res.send('Se inserto correctamente nuestro proveedor: '+nombre+'');
+                    res.json({
+                        status: true,
+                        mensaje:"El proveedor se dio de ALTA correctamente"
+                    });
+                }else{
+                    console.log('El error  es : '+ err); 
+                }
+            })
+    //     }
+    // })
+ });
+
+///// BAJA  /////
+
+router.put('/bajaproveedores/:id',(req, res)=>{
+    //asigna a id_alumno el valor que recibe por el parametro 
+    let id = req.params.id; 
+    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
+    //     if(error){
+    //         res.sendStatus(403);
+        // }else{
+            let query=`UPDATE proveedores set Estado = 'B' WHERE idProveedores='${id}'`;
+            mysqlConeccion.query(query, (err, registros)=>{
+                if(!err){
+                    res.json({
+                        status: true,
+                        mensaje:"El proveedor se dio de BAJA correctamente"
+                    });
+                }else{
+                    console.log('El error  es : '+ err); 
+                }
+            })
+    //     }
+    // })
+ });
+
+
+ router.get('/proveedor/:idProveedores', (req, res)=>{
+
+    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
+    //     if(error){
+    //         res.sendStatus(403);
+        // }else{
+            const {idProveedores} = req.params
+            mysqlConeccion.query('select * from proveedores where idProveedores=?',[idProveedores], (err, registro)=>{
+                if(!err){
+                    res.json(registro);
+                }else{
+                    console.log(err)
+                }
+            })
+        // }
+    // })   
+    
+});
+
+
+/// EDIT
+router.put('/edit_proveedor/:id' , (req, res)=>{
+    //asigna a id_curso el valor que recibe por el parametro 
+    let idProveedores = req.params.id;
+    const {  Nombre, Direccion, Telefono} =req.body  
+    console.log(req.body)
+    let query=`UPDATE proveedores SET Nombre='${Nombre}', Direccion='${Direccion}', Telefono='${Telefono}' WHERE idProveedores='${idProveedores}'`;
+    mysqlConeccion.query(query, [Nombre, Direccion, Telefono, idProveedores], (err, registros)=>{
+        if(!err){
+            res.send('El Id que editamos es : '+idProveedores+' y cambiamos muchos campos!!');
+        }else{
+            console.log(err)
+        }
+    })
+       
+});
+
+router.post('/proveedores', (req, res)=>{
+    const { Nombre, Direccion, Telefono,Producto} = req.body
+    
+            let query=`INSERT INTO proveedores (Nombre, Direccion, Telefono, Producto) VALUES ('${Nombre}','${Direccion}','${Telefono}','${Producto}') `;
+            mysqlConeccion.query(query, (err, registros)=>{
+                if(!err){
+                    res.send('Se inserto correctamente nuestro proveedor: '+Nombre);
                 }else{
                     console.log(err)
                     res.send('El error es: '+err);
@@ -594,53 +783,70 @@ router.post('/Proveedores', (req, res)=>{
     
 });
 
-//metodo para eliminar los datos de un proveedor en particular
-router.delete('/Proveedores/:id',verificarToken ,(req, res)=>{
-    //asigna a id_alumno el valor que recibe por el parametro 
-    let idProveedores  = req.params.idProveedores; 
-    jwt.verify(req.token, 'siliconKey', (error, valido)=>{
-        if(error){
-            res.sendStatus(403);
-        }else{
-            let query=`DELETE FROM Proveedores WHERE idProveedores='${idProveedores}'`;
-            mysqlConeccion.query(query, (err, registros)=>{
-                if(!err){
-                    res.send('El proveedor que ELIMINAMOS es ID : '+idProveedores);
-                }else{
-                    res.send('El error  es : '+ err); 
-                }
-            })
-        }
-    })
- });
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////
+/////////////////////CLIENTES /////////////////////////
+//////////////////////////////////////////////////////
+
+
+
 
  //Devuelve a todos los Clientes activos de nuestra base de datos 
-router.get('/Clientes', verificarToken, (req, res)=>{
-    
-    jwt.verify(req.token, 'siliconKey', (error)=>{
+router.get('/clientes',verificarToken,(req, res)=>{
+
+    jwt.verify(req.token, 'empresaropa', (error)=>{
         if(error){
             res.sendStatus(403);
         }else{
-            const query='select * from Clientes';
-            mysqlConeccion.query(query, (err, rows)=>{
+            mysqlConeccion.query('select * from Clientes', (err, registro)=>{
                 if(!err){
-                    res.json(rows);
+                    res.json(registro);
                 }else{
                     console.log(err)
                 }
             })
         }
-    });    
+    })   
+
 });
 
-//metodo para insertar Clientes a travez del metodo POST
-router.post('/Clientes', (req, res)=>{
-    const { idClientes, nombre, direccion, telefono} = req.body
+
+router.get('/clientes/:idClientes', (req, res)=>{
+
+    // jwt.verify(req.token, 'siliconKey', (error, valido)=>{
+    //     if(error){
+    //         res.sendStatus(403);
+        // }else{
+            const {idClientes} = req.params
+            console.log(req.params)
+            mysqlConeccion.query('select * from Clientes where idClientes=?',[idClientes], (err, registro)=>{
+                if(!err){
+                    res.json(registro);
+                }else{
+                    console.log(err)
+                }
+            })
+        // }
+    // })   
     
-            let query=`INSERT INTO Clientes (idClientes, nombre, direccion) VALUES ('${idClientes}','${nombre}','${direccion}','${telefono}','A')`;
+});
+
+
+//metodo para insertar Clientes a travez del metodo POST
+router.post('/clientes', (req, res)=>{
+    const { Nombre, Direccion, Telefono,Producto} = req.body
+    
+            let query=`INSERT INTO clientes (Nombre, Direccion, Telefono, Producto) VALUES ('${Nombre}','${Direccion}','${Telefono}','${Producto}') `;
             mysqlConeccion.query(query, (err, registros)=>{
                 if(!err){
-                    res.send('Se inserto correctamente nuestro Cliente: '+nombre+'');
+                    res.send('Se inserto correctamente nuestro cliente: '+Nombre);
                 }else{
                     console.log(err)
                     res.send('El error es: '+err);
@@ -650,32 +856,89 @@ router.post('/Clientes', (req, res)=>{
     
 });
 
-//metodo para eliminar los datos de un Cliente en particular
-router.delete('/Clientes/:id',verificarToken ,(req, res)=>{
+
+router.put('/edit_clientes/:id',(req, res)=>{
+    // jwt.verify(req.token, 'empresaropa', (error)=>{
+    //     if(error){
+    //         res.sendStatus(403)
+    //     }else{
+            let idClientes = req.params.id;
+            const {  Nombre, Direccion, Telefono} =req.body  
+            console.log(req.body)
+            mysqlConeccion.query(`UPDATE clientes SET Nombre='${Nombre}', Direccion='${Direccion}', Telefono='${Telefono}' WHERE idClientes='${idClientes}'`, (err, registros)=>{
+                if(!err){
+                    res.send('El Id que editamos es : '+idClientes+' y cambiamos muchos campos!!');
+                }else{
+                    console.log(err)
+                }
+            })
+        // }
+    // }) 
+});
+
+
+
+
+//ALTA CLIENTE
+
+router.put('/altaclientes/:id',verificarToken,(req, res)=>{
     //asigna a id_alumno el valor que recibe por el parametro 
-    let idClientes  = req.params.idClientes; 
-    jwt.verify(req.token, 'siliconKey', (error, valido)=>{
+    let id = req.params.id; 
+    jwt.verify(req.token, 'empresaropa', (error, valido)=>{
         if(error){
             res.sendStatus(403);
         }else{
-            let query=`DELETE FROM Clientes WHERE idClientes='${idClientes}'`;
+            let query=`UPDATE clientes set Estado = 'A' WHERE idClientes='${id}'`;
             mysqlConeccion.query(query, (err, registros)=>{
                 if(!err){
-                    res.send('El cliente que ELIMINAMOS es ID : '+idClientes);
+                    res.json({
+                        status: true,
+                        mensaje:"El usuario se dio de ALTA correctamente"
+                    });
                 }else{
-                    res.send('El error  es : '+ err); 
+                    console.log('El error  es : '+ err); 
                 }
             })
         }
     })
  });
+
+///// BAJA CLIENTE /////
+
+router.put('/bajaclientes/:id',verificarToken,(req, res)=>{
+     
+    let id = req.params.id; 
+    jwt.verify(req.token, 'empresaropa', (error, valido)=>{
+        if(error){
+            res.sendStatus(403);
+        }else{
+            let query=`UPDATE clientes set Estado = 'B' WHERE idClientes='${id}'`;
+            mysqlConeccion.query(query, (err, registros)=>{
+                if(!err){
+                    res.json({
+                        status: true,
+                        mensaje:"El usuario se dio de BAJA correctamente"
+                    });
+                }else{
+                    console.log('El error  es : '+ err); 
+                }
+            })
+        }
+    })
+ });
+
+
+
+
+
+
 
 ////////////// /////////////////
 //////////////Usuarios /////////
 ////////////// /////////////////
 router.get('/usuarios', verificarToken, (req, res)=>{
 
-        jwt.verify(req.token, 'siliconKey', (error, valido)=>{
+        jwt.verify(req.token, 'empresaropa', (error, valido)=>{
             if(error){
                 res.sendStatus(403);
             }else{
@@ -696,24 +959,27 @@ router.get('/usuarios', verificarToken, (req, res)=>{
 router.post('/login', (req, res)=>{
     const {username, password} =req.body
     if(username!=undefined && password!=undefined){
-        mysqlConeccion.query('select u.id, u.username,  u.password,  u.email, u.apellido_nombre from usuarios u where u.estado="A" AND username=?',[username], (err, rows)=>{
+        mysqlConeccion.query('select u.username,  u.password,  u.email, u.apellido_nombre from usuarios u where u.estado="A" AND username=?',[username], (err, rows)=>{
             if(!err){
                 if(rows.length!=0){
                     const bcryptPassword = bcrypt.compareSync(password, rows[0].password);
                     if(bcryptPassword){
-                        jwt.sign({rows}, 'siliconKey' ,(err, token)=>{
-                            res.json(
-                                {
-                                    status: true,
-                                    datos: rows,
-                                    token: token
-                                });
-                        }) 
+                        jwt.sign({rows}, 'empresaropa' ,(err, token)=>{
+                       res.json(
+                        {
+                            status: true,
+                            datos: rows,
+                            token: token,
+                            mensaje: "Ingreso correctamente"
+                        })
+                    })
                     }else{
                         res.json(
                             {
                                 status: false,
                                 mensaje:"La Contraseña es incorrecta"
+                                
+                            
                             });
                     }
                 }else{
@@ -722,7 +988,7 @@ router.post('/login', (req, res)=>{
                             status: false,
                             mensaje:"El usuario no existe "
                         });
-                    
+
                 }
             }else{
                 res.json(
@@ -730,14 +996,14 @@ router.post('/login', (req, res)=>{
                         status: false,
                         mensaje:"Error en el servidor"
                     });
-                
+                    
             }
         });
     }else{
         res.json({
             status: false,
             mensaje:"Faltan completar datos"
-        });
+        })
     }
 });
 
@@ -746,17 +1012,37 @@ router.post('/registro', async(req, res)=>{
     const {username, password, email, apellido_nombre} =req.body
     let hash = bcrypt.hashSync(password,10);
 
-    let query=`INSERT INTO usuarios (username, password, email, apellido_nombre, fecha_creacion) VALUES ('${username}','${hash}','${email}','${apellido_nombre}',NOW())`;
-    mysqlConeccion.query(query, (err, registros)=>{
+    let queryCheck=`SELECT * FROM usuarios WHERE username='${username}'`;
+    mysqlConeccion.query(queryCheck, (err, result)=>{
         if(!err){
-            res.json({
-                status: true,
-                mensaje:"El usuario se creo correctamente"
-            });
+            if(result.length > 0){
+                res.json({
+                    status: false,
+                    mensaje:"El nombre de usuario ya existe"
+                });
+            }else{
+                let query=`INSERT INTO usuarios (username, password, email, apellido_nombre, fecha_creacion) VALUES ('${username}','${hash}','${email}','${apellido_nombre}',NOW())`;
+                mysqlConeccion.query(query, (err, registros)=>{
+                    if(!err){
+                        res.json({
+                            status: true,
+                            mensaje:"El usuario se creo correctamente"
+                        });
+                    }else{
+                        res.json({
+                            status: false,
+                            mensaje:"Hay un error al registrar el usuario"
+                        });
+                    }
+                });
+            }
         }else{
-            res.send('Ocurrio un error desde el servidor'+err);
+            res.json({
+                status: false,
+                mensaje:"Hay un error al registrar el usuario"
+            });
         }
-    })
+    });
 });
 
 router.put('/resetpassword/:id', (req, res)=>{
@@ -822,16 +1108,8 @@ function verificarToken(req, res, next){
         req.token=bearerToken;
         next();
     }else{
-         res.send('Para consultar las apis debe estar autenticado.Gracias');
+         res.send('Para consultar las apis debe estar autenticado');
         // console.log('Ocurrio un error')
-    }
-}
-
-function esNumero(parametro) {
-    if(!isNaN(parseInt(parametro))){
-        return false
-    } else {
-        return true
     }
 }
 
